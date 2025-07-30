@@ -54,6 +54,14 @@ st.markdown("""
         color: #7f8c8d;
         font-size: 0.9rem;
     }
+    .keyword-link {
+        color: #2e86c1;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .keyword-link:hover {
+        text-decoration: underline;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -110,11 +118,17 @@ EXAMS = {
 
 # Main content
 def show_homepage():
-    st.markdown('<h1 class="header">RBT Practice Exam Mastery</h1>', unsafe_allow_html=True)
+    st.markdown(
+        '<h1 class="header">'
+        '<a href="https://practicerbtexam.com/" class="keyword-link">RBT Practice Exam</a> Mastery'
+        '</h1>', 
+        unsafe_allow_html=True
+    )
+    
     st.markdown("""
     <div style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">
-        <b>Looking for the most effective RBT practice exam tools to pass your certification with confidence?</b>
-        <p>You're in the right place! Our expertly crafted free RBT practice exams simulate the official test and are designed to help you master every domain of the Registered Behavior Technician exam.</p>
+        <b>Looking for the most effective <a href="https://practicerbtexam.com/" class="keyword-link">RBT practice exam</a> tools to pass your certification with confidence?</b>
+        <p>You're in the right place! Our expertly crafted free <a href="https://practicerbtexam.com/" class="keyword-link">RBT practice exams</a> simulate the official test and are designed to help you master every domain of the Registered Behavior Technician exam.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -158,13 +172,20 @@ def show_homepage():
     ]
     
     for exam in exams:
-        st.markdown(f"""
-        <div class="exam-card">
-            <h3>{exam}</h3>
-            <p>Comprehensive test covering all RBT domains: Measurement, Assessment, Skill Acquisition, Behavior Reduction, Documentation, and Professional Conduct.</p>
-            <button class="btn-primary" onclick="window.streamlit.setComponentValue('start_{exam}')">Start Exam</button>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container():
+            st.markdown(f"""
+            <div class="exam-card">
+                <h3>{exam}</h3>
+                <p>Comprehensive test covering all RBT domains: Measurement, Assessment, Skill Acquisition, Behavior Reduction, Documentation, and Professional Conduct.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("Start Exam", key=f"start_{exam}"):
+                st.session_state.current_exam = exam
+                st.session_state.current_question = 0
+                st.session_state.answers = {}
+                st.session_state.show_results = False
+                st.experimental_rerun()
     
     # Domain coverage
     st.markdown('<h2 class="subheader">Complete RBT Task List Coverage</h2>', unsafe_allow_html=True)
@@ -192,7 +213,7 @@ def show_homepage():
     # Footer with link
     st.markdown("""
     <div class="footer">
-        <p>© 2023 Practicerbtexam.com | Trusted by thousands of aspiring RBTs</p>
+        <p>© 2023 <a href="https://practicerbtexam.com/" class="keyword-link">Practicerbtexam.com</a> | Trusted by thousands of aspiring RBTs</p>
         <p>Comprehensive preparation resources for the Registered Behavior Technician certification exam</p>
     </div>
     """, unsafe_allow_html=True)
@@ -267,10 +288,13 @@ def show_results(questions, exam_name):
     else:
         st.markdown("### 📚 Keep practicing! Review the explanations and try again.")
     
-    if st.button("Take Another Exam"):
-        reset_exam()
-    if st.button("Back to Home"):
-        reset_exam(home=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Take Another Exam"):
+            reset_exam()
+    with col2:
+        if st.button("Back to Home"):
+            reset_exam(home=True)
 
 def reset_exam(home=False):
     st.session_state.current_exam = None
@@ -282,12 +306,6 @@ def reset_exam(home=False):
 
 # App routing
 def main():
-    # Check if exam should be started
-    query_params = st.experimental_get_query_params()
-    for exam_name in EXAMS.keys():
-        if f"start_{exam_name}" in query_params:
-            st.session_state.current_exam = exam_name
-    
     if st.session_state.current_exam:
         take_exam(st.session_state.current_exam)
     else:
