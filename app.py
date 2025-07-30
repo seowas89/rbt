@@ -171,21 +171,7 @@ def show_homepage():
         "RBT Practice Exam Mock Test"
     ]
     
-    for exam in exams:
-        with st.container():
-            st.markdown(f"""
-            <div class="exam-card">
-                <h3>{exam}</h3>
-                <p>Comprehensive test covering all RBT domains: Measurement, Assessment, Skill Acquisition, Behavior Reduction, Documentation, and Professional Conduct.</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button("Start Exam", key=f"start_{exam}"):
-                st.session_state.current_exam = exam
-                st.session_state.current_question = 0
-                st.session_state.answers = {}
-                st.session_state.show_results = False
-                st.experimental_rerun()
+   
     
     # Domain coverage
     st.markdown('<h2 class="subheader">Complete RBT Task List Coverage</h2>', unsafe_allow_html=True)
